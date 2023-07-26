@@ -3,72 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mercy's Lost Pet Report</title>
+  <title>Lost Pet Report - Mercy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    button {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Mercy's Lost Pet Report</h1>
-  <p>If you have any information about Mercy, please contact the owner.</p>
-  <h2>Pet Information</h2>
-  <p>Name: Mercy</p>
-  <p>Description: Mercy is a small, black cat with green eyes. 1</p>
+  <div class="container">
+    <h1>Lost Pet Report - Mercy</h1>
+    <p>
+      If you have found Mercy, the lost cat, please let us know by providing your contact information below.
+    </p>
 
-  <h2>Contact Owner</h2>
-  <p>Email: <a href="mailto:mercy_owner@example.com">mercy_owner@example.com</a></p>
-  <p>Phone: <a href="tel:+1234567890">+123 456 7890</a></p>
+    <!-- Form to submit contact information -->
+    <form id="contactForm">
+      <div class="form-group">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required>
+      </div>
 
-  <button id="getLocationBtn">Send My Location</button>
+      <!-- Ask for user's location -->
+      <div class="form-group">
+        <label for="includeLocation">Include your location?</label>
+        <input type="checkbox" id="includeLocation" name="includeLocation">
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
 
   <script>
-    // Function to send data to the webhook using Cors Anywhere proxy
-    async function sendWebhookNotification(data) {
-      const corsAnywhereURL = 'https://cors-anywhere.herokuapp.com/';
-      const webhookURL = 'https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=';
+    // Function to send a notification to Home Assistant with visitor information
+    function sendNotificationToHomeAssistant() {
+      const petName = "Mercy";
 
-      try {
-        await fetch(corsAnywhereURL + webhookURL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        alert('Thank you! Your location has been sent.');
-      } catch (error) {
-        alert('Error sending location: ' + error.message);
-      }
+      // Gather visitor information
+      const visitorInfo = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        petName: petName
+      };
+
+      // Sending a POST request to the webhook URL with the visitor information
+      fetch("https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(visitorInfo)
+      });
     }
 
-    // Function to get user's location and send it via webhook
-    function sendLocation() {
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            const locationData = {
-              latitude,
-              longitude
-            };
-            // Modify this object with any additional information you want to send
-            const dataToSend = {
-              petName: 'Mercy',
-              petDescription: 'Mercy is a small, black cat with green eyes.',
-              location: locationData
-            };
+    // Function to get the user's GPS location and submit the form data
+    function submitForm(event) {
+      event.preventDefault();
 
-            // Send the data to the webhook using Cors Anywhere proxy
-            sendWebhookNotification(dataToSend);
+      const formData = new FormData(document.getElementById("contactForm"));
+      const includeLocation = document.getElementById("includeLocation").checked;
+
+      // Check if the user wants to include their location
+      if (includeLocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            // Attach the user's location to the form data
+            formData.append("latitude", position.coords.latitude);
+            formData.append("longitude", position.coords.longitude);
+            // Submit the form data to the webhook URL
+            sendDataToWebhook(formData);
           },
-          (error) => {
-            alert('Error getting location: ' + error.message);
+          error => {
+            console.error("Error getting user's location:", error);
+            // If there's an error in getting the location, still submit the form without it
+            sendDataToWebhook(formData);
           }
         );
       } else {
-        alert('Geolocation is not available on this device.');
+        // Submit the form data to the webhook URL
+        sendDataToWebhook(formData);
       }
     }
 
-    // Attach click event to the button
-    document.getElementById('getLocationBtn').addEventListener('click', sendLocation);
+    // Function to send form data to the webhook URL
+    function sendDataToWebhook(formData) {
+      // Sending a POST request to the webhook URL with the form data
+      fetch("https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=", {
+        method: "POST",
+        body: formData
+      }).then(() => {
+        alert("Thank you for your submission!");
+      }).catch(error => {
+        console.error("Error submitting form data to webhook:", error);
+        alert("There was an error submitting the form. Please try again later.");
+      });
+    }
+
+    // Call the function to send a notification to Home Assistant as soon as the page loads
+    sendNotificationToHomeAssistant();
+
+    // Add form submission event listener
+    document.getElementById("contactForm").addEventListener("submit", submitForm);
   </script>
 </body>
 </html>
