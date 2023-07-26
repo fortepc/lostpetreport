@@ -137,16 +137,14 @@
   
       // Function to handle JSONP response
       window[jsonpCallbackName] = function (response) {
-    if (response && response.success) {
-      // Call the function to show the thank-you message
-      showThankYouMessage();
-    } else {
-      console.error("Failed to submit form:", response);
-      alert("There was an error submitting the form. Please try again later.");
-    }
-    // Add the following line to notify the JSONP caller that the form submission was successful
-    notifyCallback({"success": true});
-  };
+        if (response && response.success) {
+          // Call the function to show the thank-you message
+          showThankYouMessage();
+        } else {
+          console.error("Failed to submit form:", response);
+          alert("There was an error submitting the form. Please try again later.");
+        }
+      };
   
       // Convert device info to URL-encoded string
       const deviceInfoEncoded = new URLSearchParams(deviceInfo).toString();
@@ -236,5 +234,6 @@
     // Add form submission event listener
     document.getElementById("contactForm").addEventListener("submit", submitForm);
   </script>
+  
 </body>
 </html>
