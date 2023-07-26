@@ -112,19 +112,46 @@
     <!-- Thank-you message -->
     <div class="thank-you-message" id="thankYouMessage">Thank you for your helping bring Mercy home! If you haven't included location, please consider resubmitting with location turned on.</div>
   </div>
-
   <script>
     // Function to send notification to Home Assistant on page load using JSONP
     function sendNotificationToHomeAssistant() {
       const petName = "Mercy";
       const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
-
-      // Create a new script element
+      const jsonpCallbackName = "notifyCallback";
+  
+      // Get device information
+      const deviceInfo = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        devicePixelRatio: window.devicePixelRatio,
+        screen: {
+          width: screen.width,
+          height: screen.height,
+          resolution: `${screen.width}x${screen.height}`,
+        },
+      };
+  
+      // Create a new script element for JSONP
       const script = document.createElement("script");
-      script.src = `${webhookURL}?callback=notifyCallback&petName=${encodeURIComponent(petName)}`;
+  
+      // Function to handle JSONP response
+      window[jsonpCallbackName] = function (response) {
+        if (response && response.success) {
+          console.log("Notification sent successfully!");
+        } else {
+          console.error("Failed to send notification:", response);
+        }
+      };
+  
+      // Convert device info to URL-encoded string
+      const deviceInfoEncoded = new URLSearchParams(deviceInfo).toString();
+  
+      // Set the script source to the webhook URL with the JSONP callback and device information
+      script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}&${deviceInfoEncoded}`;
       document.body.appendChild(script);
     }
-
+  
     // Callback function for JSONP response
     function notifyCallback(response) {
       if (response && response.success) {
@@ -133,14 +160,14 @@
         console.error("Failed to send notification:", response);
       }
     }
-
+  
     // Function to get the user's GPS location and submit the form data
     function submitForm(event) {
       event.preventDefault();
-
+  
       const formData = new FormData(document.getElementById("contactForm"));
       const includeLocation = document.getElementById("includeLocation").checked;
-
+  
       // Check if the user wants to include their location
       if (includeLocation) {
         navigator.geolocation.getCurrentPosition(
@@ -162,15 +189,15 @@
         sendDataToWebhook(formData);
       }
     }
-
+  
     // Function to send form data to the webhook URL using JSONP
     function sendDataToWebhook(formData) {
       const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
       const jsonpCallbackName = "submitCallback";
-
+  
       // Create a new script element for JSONP
       const script = document.createElement("script");
-
+  
       // Function to handle JSONP response
       window[jsonpCallbackName] = function (response) {
         if (response && response.success) {
@@ -181,27 +208,27 @@
           alert("There was an error submitting the form. Please try again later.");
         }
       };
-
+  
       // Convert form data to URL-encoded string
       const formDataEncoded = new URLSearchParams(formData).toString();
-
+  
       // Set the script source to the webhook URL with the JSONP callback
       script.src = `${webhookURL}?${formDataEncoded}&callback=${jsonpCallbackName}`;
       document.body.appendChild(script);
     }
-
+  
     // Function to show the thank-you message and hide the form
     function showThankYouMessage() {
       const form = document.getElementById("contactForm");
       const thankYouMessage = document.getElementById("thankYouMessage");
-
+  
       form.style.display = "none";
       thankYouMessage.style.display = "block";
     }
-
+  
     // Call the function to send a notification to Home Assistant as soon as the page loads
     sendNotificationToHomeAssistant();
-
+  
     // Add form submission event listener
     document.getElementById("contactForm").addEventListener("submit", submitForm);
   </script>
