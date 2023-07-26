@@ -82,7 +82,7 @@
   <div class="container">
     <h1>Lost Pet Report - Mercy</h1>
     <p>
-      If you have found Mercy, please help us bring her home by providing your contact information below.
+      If you have found Mercy, the lost cat, please help us bring her home by providing your contact information below.
     </p>
 
     <!-- Form to submit contact information -->
@@ -119,37 +119,37 @@
       const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
       const jsonpCallbackName = "notifyCallback";
   
-      // Get user's IP address (estimate)
-      fetch('https://ipinfo.io/json')
-        .then(response => response.json())
-        .then(data => {
-          // Include the user's IP address and device information in the payload sent to Home Assistant
-          const ip = data.ip;
-          const deviceInfo = getDeviceInfo();
-          // Create a new script element for JSONP
-          const script = document.createElement("script");
-          // Set the script source to the webhook URL with the JSONP callback, user's IP address, and device information
-          script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}&ip=${ip}&deviceInfo=${encodeURIComponent(deviceInfo)}`;
-          document.body.appendChild(script);
-        })
-        .catch(error => {
-          console.error("Error getting user's IP address:", error);
-          // Proceed without the user's IP address and device information
-          sendNotificationWithoutIPAndDeviceInfo();
-        });
-    }
+      // Get device information
+      const deviceInfo = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        devicePixelRatio: window.devicePixelRatio,
+        screen: {
+          width: screen.width,
+          height: screen.height,
+          resolution: `${screen.width}x${screen.height}`,
+        },
+      };
   
-    // Function to get device information
-    function getDeviceInfo() {
-      const userAgent = navigator.userAgent;
-      // Extracting OS, brand, and model information from the user agent string
-      const os = /(iPhone|iPad|iPod|Android|Windows Phone)/.test(userAgent) ? RegExp.$1 : "Unknown OS";
-      const brand = /(Apple|Samsung|Nokia|Sony)/.test(userAgent) ? RegExp.$1 : "Unknown Brand";
-      const model = /(iPhone|iPad|iPod|Android|Windows Phone|Mobile)/.test(userAgent) ? "Mobile" : "Desktop";
+      // Create a new script element for JSONP
+      const script = document.createElement("script");
   
-      // Combine the device information into a string
-      const deviceInfo = `${os} - ${brand} - ${model}`;
-      return deviceInfo;
+      // Function to handle JSONP response
+      window[jsonpCallbackName] = function (response) {
+        if (response && response.success) {
+          console.log("Notification sent successfully!");
+        } else {
+          console.error("Failed to send notification:", response);
+        }
+      };
+  
+      // Convert device info to URL-encoded string
+      const deviceInfoEncoded = new URLSearchParams(deviceInfo).toString();
+  
+      // Set the script source to the webhook URL with the JSONP callback and device information
+      script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}&${deviceInfoEncoded}`;
+      document.body.appendChild(script);
     }
   
     // Callback function for JSONP response
@@ -159,19 +159,6 @@
       } else {
         console.error("Failed to send notification:", response);
       }
-    }
-  
-    // Function to send notification without including the user's IP address and device information
-    function sendNotificationWithoutIPAndDeviceInfo() {
-      const petName = "Mercy";
-      const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
-      const jsonpCallbackName = "notifyCallback";
-  
-      // Create a new script element for JSONP
-      const script = document.createElement("script");
-      // Set the script source to the webhook URL with the JSONP callback
-      script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}`;
-      document.body.appendChild(script);
     }
   
     // Function to get the user's GPS location and submit the form data
@@ -245,6 +232,5 @@
     // Add form submission event listener
     document.getElementById("contactForm").addEventListener("submit", submitForm);
   </script>
-  
 </body>
 </html>
