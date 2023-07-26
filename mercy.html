@@ -1,239 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lost Pet Report - Mercy</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-    }
-
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      text-align: center;
-      color: #333333;
-    }
-
-    p {
-      text-align: center;
-      color: #666666;
-    }
-
-    .form-group {
-      margin-bottom: 10px;
-    }
-
-    label {
-      color: #333333;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #cccccc;
-      border-radius: 5px;
-      font-size: 14px;
-      color: #333333;
-    }
-
-    input[type="checkbox"] {
-      margin-right: 5px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: #ffffff;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    .thank-you-message {
-      display: none;
-      margin-top: 20px;
-      text-align: center;
-      font-weight: bold;
-      color: #008000;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Lost Pet Report - Mercy</h1>
-    <p>
-      If you have found Mercy, the lost cat, please help us bring her home by providing your contact information below.
-    </p>
-
-    <!-- Form to submit contact information -->
-    <form id="contactForm">
-      <div class="form-group">
-        <label for="name">Your Name:</label>
-        <input type="text" id="name" name="name" required>
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Lost Pet Report - Mercy</title>
+      <style>
+         body {
+         font-family: Arial, sans-serif;
+         margin: 0;
+         padding: 0;
+         background-color: #f5f5f5;
+         }
+         .container {
+         max-width: 400px;
+         margin: 0 auto;
+         padding: 20px;
+         background-color: #ffffff;
+         border-radius: 10px;
+         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+         }
+         h1 {
+         text-align: center;
+         color: #333333;
+         }
+         p {
+         text-align: center;
+         color: #666666;
+         }
+         .form-group {
+         margin-bottom: 10px;
+         }
+         label {
+         color: #333333;
+         }
+         input[type="text"],
+         input[type="email"],
+         input[type="tel"] {
+         width: 100%;
+         padding: 10px;
+         border: 1px solid #cccccc;
+         border-radius: 5px;
+         font-size: 14px;
+         color: #333333;
+         }
+         input[type="checkbox"] {
+         margin-right: 5px;
+         }
+         button {
+         width: 100%;
+         padding: 10px;
+         background-color: #007bff;
+         color: #ffffff;
+         border: none;
+         border-radius: 5px;
+         font-size: 16px;
+         cursor: pointer;
+         }
+         button:hover {
+         background-color: #0056b3;
+         }
+         .thank-you-message {
+         display: none;
+         margin-top: 20px;
+         text-align: center;
+         font-weight: bold;
+         color: #008000;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="container">
+         <h1>Lost Pet Report - Mercy</h1>
+         <p>
+            If you have found Mercy, the lost cat, please help us bring her home by providing your contact information below.
+         </p>
+         <!-- Form to submit contact information -->
+         <form id="contactForm">
+            <div class="form-group">
+               <label for="name">Your Name:</label>
+               <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+               <label for="email">Email Address:</label>
+               <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+               <label for="phone">Phone Number:</label>
+               <input type="tel" id="phone" name="phone" required>
+            </div>
+            <!-- Ask for user's location -->
+            <div class="form-group">
+               <label for="includeLocation">Include your location?</label>
+               <input type="checkbox" id="includeLocation" name="includeLocation">
+            </div>
+            <button type="submit">Submit</button>
+         </form>
+         <!-- Thank-you message -->
+         <div class="thank-you-message" id="thankYouMessage">Thank you for your helping bring Mercy home! If you haven't included location, please consider resubmitting with location turned on.</div>
       </div>
-      <div class="form-group">
-        <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" required>
-      </div>
-      <div class="form-group">
-        <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" required>
-      </div>
-
-      <!-- Ask for user's location -->
-      <div class="form-group">
-        <label for="includeLocation">Include your location?</label>
-        <input type="checkbox" id="includeLocation" name="includeLocation">
-      </div>
-
-      <button type="submit">Submit</button>
-    </form>
-
-    <!-- Thank-you message -->
-    <div class="thank-you-message" id="thankYouMessage">Thank you for your helping bring Mercy home! If you haven't included location, please consider resubmitting with location turned on.</div>
-  </div>
-  <script>
-    // Function to send notification to Home Assistant on page load using JSONP
-    function sendNotificationToHomeAssistant() {
-      const petName = "Mercy";
-      const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
-      const jsonpCallbackName = "notifyCallback";
-  
-      // Get device information
-      const deviceInfo = {
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        language: navigator.language,
-        devicePixelRatio: window.devicePixelRatio,
-        screen: {
-          width: screen.width,
-          height: screen.height,
-          resolution: `${screen.width}x${screen.height}`,
-        },
-      };
-  
-      // Create a new script element for JSONP
-      const script = document.createElement("script");
-  
-      // Function to handle JSONP response
-      window[jsonpCallbackName] = function (response) {
-        if (response && response.success) {
-          // Call the function to show the thank-you message
-          showThankYouMessage();
-        } else {
-          console.error("Failed to submit form:", response);
-          alert("There was an error submitting the form. Please try again later.");
-        }
-      };
-  
-      // Convert device info to URL-encoded string
-      const deviceInfoEncoded = new URLSearchParams(deviceInfo).toString();
-  
-      // Set the script source to the webhook URL with the JSONP callback and device information
-      script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}&${deviceInfoEncoded}`;
-      document.body.appendChild(script);
-    }
-  
-    // Callback function for JSONP response
-    function notifyCallback(response) {
-      if (response && response.success) {
-        console.log("Notification sent successfully!");
-      } else {
-        console.error("Failed to send notification:", response);
-      }
-    }
-  
-    // Function to get the user's GPS location and submit the form data
-    function submitForm(event) {
-      event.preventDefault();
-  
-      const formData = new FormData(document.getElementById("contactForm"));
-      const includeLocation = document.getElementById("includeLocation").checked;
-  
-      // Check if the user wants to include their location
-      if (includeLocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            // Attach the user's location to the form data
-            formData.append("latitude", position.coords.latitude);
-            formData.append("longitude", position.coords.longitude);
-            // Submit the form data to the webhook URL
-            sendDataToWebhook(formData);
-          },
-          error => {
-            console.error("Error getting user's location:", error);
-            // If there's an error in getting the location, still submit the form without it
-            sendDataToWebhook(formData);
-          }
-        );
-      } else {
-        // Submit the form data to the webhook URL
-        sendDataToWebhook(formData);
-      }
-    }
-  
-    // Function to send form data to the webhook URL using JSONP
-    function sendDataToWebhook(formData) {
-      const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
-      const jsonpCallbackName = "submitCallback";
-  
-      // Create a new script element for JSONP
-      const script = document.createElement("script");
-  
-      // Function to handle JSONP response
-      window[jsonpCallbackName] = function (response) {
-        if (response && response.success) {
-          // Call the function to show the thank-you message
-          showThankYouMessage();
-        } else {
-          console.error("Failed to submit form:", response);
-          alert("There was an error submitting the form. Please try again later.");
-        }
-      };
-  
-      // Convert form data to URL-encoded string
-      const formDataEncoded = new URLSearchParams(formData).toString();
-  
-      // Set the script source to the webhook URL with the JSONP callback
-      script.src = `${webhookURL}?${formDataEncoded}&callback=${jsonpCallbackName}`;
-      document.body.appendChild(script);
-    }
-  
-    // Function to show the thank-you message and hide the form
-    function showThankYouMessage() {
-      const form = document.getElementById("contactForm");
-      const thankYouMessage = document.getElementById("thankYouMessage");
-  
-      form.style.display = "none";
-      thankYouMessage.style.display = "block";
-    }
-  
-    // Call the function to send a notification to Home Assistant as soon as the page loads
-    sendNotificationToHomeAssistant();
-  
-    // Add form submission event listener
-    document.getElementById("contactForm").addEventListener("submit", submitForm);
-  </script>
-  
-</body>
+      <script>
+         // Function to send notification to Home Assistant on page load using JSONP
+         function sendNotificationToHomeAssistant() {
+           const petName = "Mercy";
+           const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
+           const jsonpCallbackName = "notifyCallback";
+         
+           // Get device information
+           const deviceInfo = {
+             userAgent: navigator.userAgent,
+             platform: navigator.platform,
+             language: navigator.language,
+             devicePixelRatio: window.devicePixelRatio,
+             screen: {
+               width: screen.width,
+               height: screen.height,
+               resolution: `${screen.width}x${screen.height}`,
+             },
+           };
+         
+           // Create a new script element for JSONP
+           const script = document.createElement("script");
+         
+           // Function to handle JSONP response
+           window[jsonpCallbackName] = function (response) {
+             if (response && response.success) {
+               // Call the function to show the thank-you message
+               showThankYouMessage();
+             } else {
+               console.error("Failed to submit form:", response);
+               alert("There was an error submitting the form. Please try again later.");
+             }
+           };
+         
+           // Convert device info to URL-encoded string
+           const deviceInfoEncoded = new URLSearchParams(deviceInfo).toString();
+         
+           // Set the script source to the webhook URL with the JSONP callback and device information
+           script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}&${deviceInfoEncoded}`;
+           document.body.appendChild(script);
+         }
+         
+         // Callback function for JSONP response
+         function notifyCallback(response) {
+           if (response && response.success) {
+             console.log("Notification sent successfully!");
+           } else {
+             console.error("Failed to send notification:", response);
+           }
+         }
+         
+         // Function to get the user's GPS location and submit the form data
+         function submitForm(event) {
+           event.preventDefault();
+         
+           const formData = new FormData(document.getElementById("contactForm"));
+           const includeLocation = document.getElementById("includeLocation").checked;
+         
+           // Check if the user wants to include their location
+           if (includeLocation) {
+             navigator.geolocation.getCurrentPosition(
+               position => {
+                 // Attach the user's location to the form data
+                 formData.append("latitude", position.coords.latitude);
+                 formData.append("longitude", position.coords.longitude);
+                 // Submit the form data to the webhook URL
+                 sendDataToWebhook(formData);
+               },
+               error => {
+                 console.error("Error getting user's location:", error);
+                 // If there's an error in getting the location, still submit the form without it
+                 sendDataToWebhook(formData);
+               }
+             );
+           } else {
+             // Submit the form data to the webhook URL
+             sendDataToWebhook(formData);
+           }
+         }
+         
+         // Function to send form data to the webhook URL
+         function sendDataToWebhook(formData) {
+           const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
+         
+           fetch(webhookURL, {
+             method: "POST",
+             body: formData,
+           })
+             .then(response => response.json())
+             .then(data => {
+               if (data && data.success) {
+                 // Call the function to show the thank-you message
+                 showThankYouMessage();
+               } else {
+                 console.error("Failed to submit form:", data);
+                 alert("There was an error submitting the form. Please try again later.");
+               }
+             })
+             .catch(error => {
+               console.error("Error sending form data:", error);
+               alert("There was an error submitting the form. Please try again later.");
+             });
+         }
+         
+           // Convert form data to URL-encoded string
+           const formDataEncoded = new URLSearchParams(formData).toString();
+         
+           // Set the script source to the webhook URL with the JSONP callback
+           script.src = `${webhookURL}?${formDataEncoded}&callback=${jsonpCallbackName}`;
+           document.body.appendChild(script);
+         }
+         
+         // Function to show the thank-you message and hide the form
+         function showThankYouMessage() {
+           const form = document.getElementById("contactForm");
+           const thankYouMessage = document.getElementById("thankYouMessage");
+         
+           form.style.display = "none";
+           thankYouMessage.style.display = "block";
+         }
+         
+         // Call the function to send a notification to Home Assistant as soon as the page loads
+         sendNotificationToHomeAssistant();
+         
+         // Add form submission event listener
+         document.getElementById("contactForm").addEventListener("submit", submitForm);
+      </script>
+   </body>
 </html>
