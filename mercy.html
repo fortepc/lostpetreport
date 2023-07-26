@@ -10,7 +10,7 @@
   <p>If you have any information about Mercy, please contact the owner.</p>
   <h2>Pet Information</h2>
   <p>Name: Mercy</p>
-  <p>Description: Mercy is a small, black cat with green eyes.</p>
+  <p>Description: Mercy is a small, black cat with green eyes. 1</p>
 
   <h2>Contact Owner</h2>
   <p>Email: <a href="mailto:mercy_owner@example.com">mercy_owner@example.com</a></p>
@@ -19,13 +19,13 @@
   <button id="getLocationBtn">Send My Location</button>
 
   <script>
-    // Contents of sendWebhook.js
-    // Modify this function to handle the Home Assistant webhook POST request
+    // Function to send data to the webhook using Cors Anywhere proxy
     async function sendWebhookNotification(data) {
+      const corsAnywhereURL = 'https://cors-anywhere.herokuapp.com/';
       const webhookURL = 'https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=';
 
       try {
-        await fetch(webhookURL, {
+        await fetch(corsAnywhereURL + webhookURL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -55,7 +55,7 @@
               location: locationData
             };
 
-            // Send the data to the webhook
+            // Send the data to the webhook using Cors Anywhere proxy
             sendWebhookNotification(dataToSend);
           },
           (error) => {
