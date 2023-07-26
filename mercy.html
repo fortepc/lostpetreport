@@ -3,36 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lost Pet Report</title>
+  <title>Mercy's Lost Pet Report</title>
 </head>
 <body>
-  <h1>Lost Pet Report</h1>
-  <p>Please help us find our lost pet. If you have any information, contact the owner.</p>
+  <h1>Mercy's Lost Pet Report</h1>
+  <p>If you have any information about Mercy, please contact the owner.</p>
   <h2>Pet Information</h2>
-  <p>Name: <span id="petName">Unknown</span></p>
-  <p>Description: <span id="petDescription">Unknown</span></p>
+  <p>Name: Mercy</p>
+  <p>Description: Mercy is a small, black cat with green eyes.</p>
 
   <h2>Contact Owner</h2>
-  <p>Email: <a href="mailto:owner@example.com">owner@example.com</a></p>
+  <p>Email: <a href="mailto:mercy_owner@example.com">mercy_owner@example.com</a></p>
   <p>Phone: <a href="tel:+1234567890">+123 456 7890</a></p>
 
   <button id="getLocationBtn">Send My Location</button>
 
   <script>
-    // Function to send data to the local serverless function
-    async function sendToServerlessFunction(data) {
-      await fetch('./sendWebhook.js', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-    }
+    // Function to send data to the webhook
+    async function sendWebhookNotification(data) {
+      const webhookURL = 'https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=';
 
-    // Function to send a webhook notification to Home Assistant
-    function sendWebhookNotification(data) {
-      sendToServerlessFunction(data);
+      try {
+        await fetch(webhookURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        alert('Thank you! Your location has been sent.');
+      } catch (error) {
+        alert('Error sending location: ' + error.message);
+      }
     }
 
     // Function to get user's location and send it via webhook
@@ -47,12 +49,13 @@
             };
             // Modify this object with any additional information you want to send
             const dataToSend = {
-              petName: document.getElementById('petName').textContent,
-              petDescription: document.getElementById('petDescription').textContent,
+              petName: 'Mercy',
+              petDescription: 'Mercy is a small, black cat with green eyes.',
               location: locationData
             };
+
+            // Send the data to the webhook
             sendWebhookNotification(dataToSend);
-            alert('Thank you! Your location has been sent.');
           },
           (error) => {
             alert('Error getting location: ' + error.message);
@@ -62,15 +65,6 @@
         alert('Geolocation is not available on this device.');
       }
     }
-
-    // Trigger the webhook notification on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      const initialData = {
-        petName: document.getElementById('petName').textContent,
-        petDescription: document.getElementById('petDescription').textContent
-      };
-      sendWebhookNotification(initialData);
-    });
 
     // Attach click event to the button
     document.getElementById('getLocationBtn').addEventListener('click', sendLocation);
