@@ -68,6 +68,14 @@
     button:hover {
       background-color: #0056b3;
     }
+
+    .thank-you-message {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: #008000;
+    }
   </style>
 </head>
 <body>
@@ -100,6 +108,9 @@
 
       <button type="submit">Submit</button>
     </form>
+
+    <!-- Thank-you message -->
+    <div class="thank-you-message" id="thankYouMessage">Thank you for your submission!</div>
   </div>
 
   <script>
@@ -163,7 +174,8 @@
       // Function to handle JSONP response
       window[jsonpCallbackName] = function (response) {
         if (response && response.success) {
-          alert("Thank you for your submission!");
+          // Call the function to show the thank-you message
+          showThankYouMessage();
         } else {
           console.error("Failed to submit form:", response);
           alert("There was an error submitting the form. Please try again later.");
@@ -176,6 +188,15 @@
       // Set the script source to the webhook URL with the JSONP callback
       script.src = `${webhookURL}?${formDataEncoded}&callback=${jsonpCallbackName}`;
       document.body.appendChild(script);
+    }
+
+    // Function to show the thank-you message and hide the form
+    function showThankYouMessage() {
+      const form = document.getElementById("contactForm");
+      const thankYouMessage = document.getElementById("thankYouMessage");
+
+      form.style.display = "none";
+      thankYouMessage.style.display = "block";
     }
 
     // Call the function to send a notification to Home Assistant as soon as the page loads
