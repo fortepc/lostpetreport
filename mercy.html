@@ -5,20 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lost Pet Report - Mercy</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .form-group {
-      margin-bottom: 10px;
-    }
-    button {
-      margin-top: 10px;
-    }
+    /* Your CSS styles here */
   </style>
 </head>
 <body>
@@ -30,93 +17,36 @@
 
     <!-- Form to submit contact information -->
     <form id="contactForm">
-      <div class="form-group">
-        <label for="name">Your Name:</label>
-        <input type="text" id="name" name="name" required>
-      </div>
-      <div class="form-group">
-        <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" required>
-      </div>
-      <div class="form-group">
-        <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" required>
-      </div>
-
-      <!-- Ask for user's location -->
-      <div class="form-group">
-        <label for="includeLocation">Include your location?</label>
-        <input type="checkbox" id="includeLocation" name="includeLocation">
-      </div>
-
+      <!-- Your form fields here -->
       <button type="submit">Submit</button>
     </form>
   </div>
 
   <script>
-    // Function to send a notification to Home Assistant with visitor information
+    // Function to send notification to Home Assistant on page load using JSONP
     function sendNotificationToHomeAssistant() {
       const petName = "Mercy";
+      const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
 
-      // Gather visitor information
-      const visitorInfo = {
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        platform: navigator.platform,
-        petName: petName
-      };
-
-      // Sending a POST request to the webhook URL with the visitor information
-      fetch("https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(visitorInfo)
-      });
+      // Create a new script element
+      const script = document.createElement("script");
+      script.src = `${webhookURL}?callback=notifyCallback&petName=${encodeURIComponent(petName)}`;
+      document.body.appendChild(script);
     }
 
-    // Function to get the user's GPS location and submit the form data
-    function submitForm(event) {
-      event.preventDefault();
-
-      const formData = new FormData(document.getElementById("contactForm"));
-      const includeLocation = document.getElementById("includeLocation").checked;
-
-      // Check if the user wants to include their location
-      if (includeLocation) {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            // Attach the user's location to the form data
-            formData.append("latitude", position.coords.latitude);
-            formData.append("longitude", position.coords.longitude);
-            // Submit the form data to the webhook URL
-            sendDataToWebhook(formData);
-          },
-          error => {
-            console.error("Error getting user's location:", error);
-            // If there's an error in getting the location, still submit the form without it
-            sendDataToWebhook(formData);
-          }
-        );
+    // Callback function for JSONP response
+    function notifyCallback(response) {
+      if (response && response.success) {
+        console.log("Notification sent successfully!");
       } else {
-        // Submit the form data to the webhook URL
-        sendDataToWebhook(formData);
+        console.error("Failed to send notification:", response);
       }
     }
 
-    // Function to send form data to the webhook URL
-    function sendDataToWebhook(formData) {
-      // Sending a POST request to the webhook URL with the form data
-      fetch("https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=", {
-        method: "POST",
-        body: formData
-      }).then(() => {
-        alert("Thank you for your submission!");
-      }).catch(error => {
-        console.error("Error submitting form data to webhook:", error);
-        alert("There was an error submitting the form. Please try again later.");
-      });
+    // Function to submit the form
+    function submitForm(event) {
+      event.preventDefault();
+      // Your form submission logic here
     }
 
     // Call the function to send a notification to Home Assistant as soon as the page loads
