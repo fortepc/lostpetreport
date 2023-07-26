@@ -166,6 +166,7 @@
     // Function to get the user's GPS location and submit the form data
     function submitForm(event) {
       event.preventDefault();
+      
   
       const formData = new FormData(document.getElementById("contactForm"));
       const includeLocation = document.getElementById("includeLocation").checked;
@@ -192,28 +193,31 @@
       }
     }
   
-    // Function to send form data to the webhook URL
+    // Function to send form data to the webhook URL using JSONP
     function sendDataToWebhook(formData) {
       const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
-
-      fetch(webhookURL, {
-        method: "POST",
-        body: formData,
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data && data.success) {
-            // Call the function to show the thank-you message
-            showThankYouMessage();
-          } else {
-            console.error("Failed to submit form:", data);
-            alert("There was an error submitting the form. Please try again later.");
-          }
-        })
-        .catch(error => {
-          console.error("Error sending form data:", error);
+      const jsonpCallbackName = "submitCallback";
+  
+      // Create a new script element for JSONP
+      const script = document.createElement("script");
+  
+      // Function to handle JSONP response
+      window[jsonpCallbackName] = function (response) {
+        if (response && response.success) {
+          // Call the function to show the thank-you message
+          showThankYouMessage();
+        } else {
+          console.error("Failed to submit form:", response);
           alert("There was an error submitting the form. Please try again later.");
-        });
+        }
+      };
+  
+      // Convert form data to URL-encoded string
+      const formDataEncoded = new URLSearchParams(formData).toString();
+  
+      // Set the script source to the webhook URL with the JSONP callback
+      script.src = `${webhookURL}?${formDataEncoded}&callback=${jsonpCallbackName}`;
+      document.body.appendChild(script);
     }
   
     // Function to show the thank-you message and hide the form
