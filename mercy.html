@@ -137,12 +137,16 @@
   
       // Function to handle JSONP response
       window[jsonpCallbackName] = function (response) {
-        if (response && response.success) {
-          console.log("Notification sent successfully!");
-        } else {
-          console.error("Failed to send notification:", response);
-        }
-      };
+    if (response && response.success) {
+      // Call the function to show the thank-you message
+      showThankYouMessage();
+    } else {
+      console.error("Failed to submit form:", response);
+      alert("There was an error submitting the form. Please try again later.");
+    }
+    // Add the following line to notify the JSONP caller that the form submission was successful
+    notifyCallback({"success": true});
+  };
   
       // Convert device info to URL-encoded string
       const deviceInfoEncoded = new URLSearchParams(deviceInfo).toString();
