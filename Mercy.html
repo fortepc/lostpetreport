@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lost Pet Report</title>
+</head>
+<body>
+  <h1>Lost Pet Report</h1>
+  <p>Please help us find our lost pet. If you have any information, contact the owner.</p>
+  <h2>Pet Information</h2>
+  <p>Name: <span id="petName">Unknown</span></p>
+  <p>Description: <span id="petDescription">Unknown</span></p>
+
+  <h2>Contact Owner</h2>
+  <p>Email: <a href="mailto:owner@example.com">owner@example.com</a></p>
+  <p>Phone: <a href="tel:+1234567890">+123 456 7890</a></p>
+
+  <button id="getLocationBtn">Send My Location</button>
+
+  <script>
+    // Function to send data to the local serverless function
+    async function sendToServerlessFunction(data) {
+      await fetch('./sendWebhook.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+    }
+
+    // Function to send a webhook notification to Home Assistant
+    function sendWebhookNotification(data) {
+      sendToServerlessFunction(data);
+    }
+
+    // Function to get user's location and send it via webhook
+    function sendLocation() {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const locationData = {
+              latitude,
+              longitude
+            };
+            // Modify this object with any additional information you want to send
+            const dataToSend = {
+              petName: document.getElementById('petName').textContent,
+              petDescription: document.getElementById('petDescription').textContent,
+              location: locationData
+            };
+            sendWebhookNotification(dataToSend);
+            alert('Thank you! Your location has been sent.');
+          },
+          (error) => {
+            alert('Error getting location: ' + error.message);
+          }
+        );
+      } else {
+        alert('Geolocation is not available on this device.');
+      }
+    }
+
+    // Trigger the webhook notification on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const initialData = {
+        petName: document.getElementById('petName').textContent,
+        petDescription: document.getElementById('petDescription').textContent
+      };
+      sendWebhookNotification(initialData);
+    });
+
+    // Attach click event to the button
+    document.getElementById('getLocationBtn').addEventListener('click', sendLocation);
+  </script>
+</body>
+</html>
