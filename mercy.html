@@ -123,19 +123,33 @@
       fetch('https://ipinfo.io/json')
         .then(response => response.json())
         .then(data => {
-          // Include the user's IP address in the payload sent to Home Assistant
+          // Include the user's IP address and device information in the payload sent to Home Assistant
           const ip = data.ip;
+          const deviceInfo = getDeviceInfo();
           // Create a new script element for JSONP
           const script = document.createElement("script");
-          // Set the script source to the webhook URL with the JSONP callback and user's IP address
-          script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}&ip=${ip}`;
+          // Set the script source to the webhook URL with the JSONP callback, user's IP address, and device information
+          script.src = `${webhookURL}?callback=${jsonpCallbackName}&petName=${encodeURIComponent(petName)}&ip=${ip}&deviceInfo=${encodeURIComponent(deviceInfo)}`;
           document.body.appendChild(script);
         })
         .catch(error => {
           console.error("Error getting user's IP address:", error);
-          // Proceed without the user's IP address
-          sendNotificationWithoutIP();
+          // Proceed without the user's IP address and device information
+          sendNotificationWithoutIPAndDeviceInfo();
         });
+    }
+  
+    // Function to get device information
+    function getDeviceInfo() {
+      const userAgent = navigator.userAgent;
+      // Extracting OS, brand, and model information from the user agent string
+      const os = /(iPhone|iPad|iPod|Android|Windows Phone)/.test(userAgent) ? RegExp.$1 : "Unknown OS";
+      const brand = /(Apple|Samsung|Nokia|Sony)/.test(userAgent) ? RegExp.$1 : "Unknown Brand";
+      const model = /(iPhone|iPad|iPod|Android|Windows Phone|Mobile)/.test(userAgent) ? "Mobile" : "Desktop";
+  
+      // Combine the device information into a string
+      const deviceInfo = `${os} - ${brand} - ${model}`;
+      return deviceInfo;
     }
   
     // Callback function for JSONP response
@@ -147,8 +161,8 @@
       }
     }
   
-    // Function to send notification without including the user's IP address
-    function sendNotificationWithoutIP() {
+    // Function to send notification without including the user's IP address and device information
+    function sendNotificationWithoutIPAndDeviceInfo() {
       const petName = "Mercy";
       const webhookURL = "https://hooks.nabu.casa/gAAAAABkwVMl7xKUsxvYgXjqodD1jBrPqqWPV_wl5u14Mt8j0vWxYmb7jZk0BMIo6FZXxlSFehzhB5nqHfMrcfGzlJDM4HL3-YnE0fH3da8Z4JQ8Bhmf_WOWhwRDG6XcLZ-LdBw1wW-qLubb4RygLN3GrM-Rqq0Q8Ccc2zGGC3ZQ1VdHT2qinBc=";
       const jsonpCallbackName = "notifyCallback";
@@ -231,5 +245,6 @@
     // Add form submission event listener
     document.getElementById("contactForm").addEventListener("submit", submitForm);
   </script>
+  
 </body>
 </html>
